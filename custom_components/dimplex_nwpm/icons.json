@@ -1,0 +1,343 @@
+{
+  "entity": {
+    "binary_sensor": {
+      "smart_grid_input_1": {
+        "default": "mdi:transmission-tower"
+      },
+      "smart_grid_input_2": {
+        "default": "mdi:transmission-tower"
+      },
+      "utility_lock_input": {
+        "default": "mdi:transmission-tower-off",
+        "state": {
+          "off": "mdi:transmission-tower"
+        }
+      },
+      "external_lock_input": {
+        "default": "mdi:lock",
+        "state": {
+          "off": "mdi:lock-open-variant"
+        }
+      },
+      "mixer_1_open": {
+        "default": "mdi:valve-open"
+      },
+      "mixer_1_close": {
+        "default": "mdi:valve-closed"
+      },
+      "mixer_2_open": {
+        "default": "mdi:valve-open"
+      },
+      "mixer_2_close": {
+        "default": "mdi:valve-closed"
+      },
+      "mixer_3_open": {
+        "default": "mdi:valve-open"
+      },
+      "mixer_3_close": {
+        "default": "mdi:valve-closed"
+      },
+      "mixer_bivalent_open": {
+        "default": "mdi:valve-open"
+      },
+      "mixer_bivalent_close": {
+        "default": "mdi:valve-closed"
+      },
+      "mixer_regenerative_open": {
+        "default": "mdi:valve-open"
+      },
+      "mixer_regenerative_close": {
+        "default": "mdi:valve-closed"
+      },
+      "high_pressure_switch": {
+        "default": "mdi:electric-switch-closed",
+        "state": {
+          "on": "mdi:electric-switch"
+        }
+      },
+      "low_pressure_switch": {
+        "default": "mdi:electric-switch-closed",
+        "state": {
+          "on": "mdi:electric-switch"
+        }
+      },
+      "hot_gas_thermostat": {
+        "default": "mdi:electric-switch-closed",
+        "state": {
+          "on": "mdi:electric-switch"
+        }
+      },
+      "frost_protection_thermostat": {
+        "default": "mdi:electric-switch-closed",
+        "state": {
+          "on": "mdi:electric-switch"
+        }
+      },
+      "flow_switch_secondary": {
+        "default": "mdi:electric-switch-closed",
+        "state": {
+          "on": "mdi:electric-switch"
+        }
+      },
+      "compressor_motor_protection": {
+        "default": "mdi:electric-switch-closed",
+        "state": {
+          "on": "mdi:electric-switch"
+        }
+      },
+      "primary_motor_protection": {
+        "default": "mdi:electric-switch-closed",
+        "state": {
+          "on": "mdi:electric-switch"
+        }
+      },
+      "internal_four_way_valve": {
+        "default": "mdi:valve-closed",
+        "state": {
+          "on": "mdi:valve-open"
+        }
+      },
+      "external_four_way_valve": {
+        "default": "mdi:valve-closed",
+        "state": {
+          "on": "mdi:valve-open"
+        }
+      },
+      "passive_cooling_switch_valve": {
+        "default": "mdi:valve-closed",
+        "state": {
+          "on": "mdi:valve-open"
+        }
+      },
+      "solar_switch_valve": {
+        "default": "mdi:valve-closed",
+        "state": {
+          "on": "mdi:valve-open"
+        }
+      }
+    },
+    "button": {
+      "sync_time": {
+        "default": "mdi:clock-check"
+      }
+    },
+    "number": {
+      "party_hours": {
+        "default": "mdi:party-popper"
+      },
+      "holiday_days": {
+        "default": "mdi:beach"
+      },
+      "ventilation_level": {
+        "default": "mdi:fan"
+      },
+      "shock_ventilation_time": {
+        "default": "mdi:fan-clock"
+      },
+      "heating_curve_parallel_shift": {
+        "default": "mdi:chart-bell-curve-cumulative"
+      },
+      "heating_curve_endpoint": {
+        "default": "mdi:chart-bell-curve-cumulative"
+      },
+      "heating_hysteresis": {
+        "default": "mdi:delta"
+      },
+      "heating_circuit_2_heating_curve_endpoint": {
+        "default": "mdi:chart-bell-curve-cumulative"
+      },
+      "heating_circuit_2_parallel_shift": {
+        "default": "mdi:chart-bell-curve-cumulative"
+      },
+      "heating_circuit_3_heating_curve_endpoint": {
+        "default": "mdi:chart-bell-curve-cumulative"
+      },
+      "heating_circuit_3_parallel_shift": {
+        "default": "mdi:chart-bell-curve-cumulative"
+      },
+      "hot_water_hysteresis": {
+        "default": "mdi:delta"
+      },
+      "pool_hysteresis": {
+        "default": "mdi:delta"
+      },
+      "second_heat_generator_mixer_hysteresis": {
+        "default": "mdi:delta"
+      }
+    },
+    "select": {
+      "operating_mode": {
+        "default": "mdi:heat-pump",
+        "state": {
+          "summer": "mdi:weather-sunny",
+          "auto": "mdi:calendar-sync",
+          "holiday": "mdi:beach",
+          "party": "mdi:party-popper",
+          "second_heat_generator": "mdi:fire",
+          "cooling": "mdi:snowflake"
+        }
+      },
+      "smart_grid": {
+        "default": "mdi:transmission-tower",
+        "state": {
+          "hardware_input": "mdi:electric-switch",
+          "yellow": "mdi:circle",
+          "green": "mdi:leaf",
+          "red": "mdi:alert-circle",
+          "dark_green": "mdi:leaf-circle"
+        }
+      },
+      "external_lock": {
+        "default": "mdi:lock",
+        "state": {
+          "hardware_input": "mdi:electric-switch",
+          "inactive": "mdi:lock-open-variant",
+          "active": "mdi:lock"
+        }
+      }
+    },
+    "sensor": {
+      "status": {
+        "default": "mdi:heat-pump",
+        "state": {
+          "off": "mdi:power-off",
+          "heating": "mdi:radiator",
+          "pool": "mdi:pool",
+          "hot_water": "mdi:water-boiler",
+          "cooling": "mdi:snowflake",
+          "defrosting": "mdi:snowflake-melt",
+          "flow_monitoring": "mdi:waves-arrow-right",
+          "mode_switch_delay": "mdi:timer-sand",
+          "locked": "mdi:lock"
+        }
+      },
+      "lock": {
+        "default": "mdi:lock-alert",
+        "state": {
+          "none": "mdi:lock-open-variant"
+        }
+      },
+      "fault": {
+        "default": "mdi:alert-circle",
+        "state": {
+          "none": "mdi:check-circle"
+        }
+      },
+      "sensor_fault": {
+        "default": "mdi:thermometer-alert",
+        "state": {
+          "none": "mdi:thermometer-check"
+        }
+      },
+      "ventilation_supply_fan_speed": {
+        "default": "mdi:fan"
+      },
+      "ventilation_exhaust_fan_speed": {
+        "default": "mdi:fan"
+      },
+      "coefficient_of_performance": {
+        "default": "mdi:gauge"
+      },
+      "flow_rate": {
+        "default": "mdi:waves-arrow-right"
+      },
+      "system_pressure": {
+        "default": "mdi:gauge"
+      },
+      "high_pressure": {
+        "default": "mdi:gauge-full"
+      },
+      "low_pressure": {
+        "default": "mdi:gauge-low"
+      },
+      "inverter_frequency": {
+        "default": "mdi:sine-wave"
+      },
+      "power_stage_heating": {
+        "default": "mdi:speedometer"
+      },
+      "power_stage_cooling": {
+        "default": "mdi:speedometer"
+      },
+      "superheat": {
+        "default": "mdi:thermometer-lines"
+      },
+      "expansion_valve_position": {
+        "default": "mdi:valve"
+      },
+      "heating_request": {
+        "default": "mdi:hand-back-right",
+        "state": {
+          "none": "mdi:sleep",
+          "locked": "mdi:lock"
+        }
+      },
+      "cooling_request": {
+        "default": "mdi:hand-back-right",
+        "state": {
+          "none": "mdi:sleep",
+          "locked": "mdi:lock"
+        }
+      },
+      "hot_water_request": {
+        "default": "mdi:hand-back-right",
+        "state": {
+          "none": "mdi:sleep",
+          "locked": "mdi:lock"
+        }
+      },
+      "pool_request": {
+        "default": "mdi:hand-back-right",
+        "state": {
+          "none": "mdi:sleep",
+          "locked": "mdi:lock"
+        }
+      },
+      "heating_circuit_1_status": {
+        "default": "mdi:radiator",
+        "state": {
+          "cooling": "mdi:snowflake",
+          "operating_mode": "mdi:calendar-sync"
+        }
+      },
+      "heating_circuit_2_status": {
+        "default": "mdi:radiator",
+        "state": {
+          "cooling": "mdi:snowflake",
+          "operating_mode": "mdi:calendar-sync"
+        }
+      },
+      "heating_circuit_3_status": {
+        "default": "mdi:radiator",
+        "state": {
+          "cooling": "mdi:snowflake",
+          "operating_mode": "mdi:calendar-sync"
+        }
+      },
+      "hot_water_status": {
+        "default": "mdi:water-boiler"
+      },
+      "pool_status": {
+        "default": "mdi:pool"
+      },
+      "compressor_1_starts": {
+        "default": "mdi:counter"
+      },
+      "compressor_1_starts_heating": {
+        "default": "mdi:counter"
+      },
+      "compressor_1_starts_hot_water": {
+        "default": "mdi:counter"
+      },
+      "compressor_1_starts_pool": {
+        "default": "mdi:counter"
+      },
+      "compressor_1_starts_cooling": {
+        "default": "mdi:counter"
+      },
+      "compressor_2_starts": {
+        "default": "mdi:counter"
+      }
+    }
+  }
+}

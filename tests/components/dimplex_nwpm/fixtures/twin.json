@@ -1,0 +1,32 @@
+{
+  "meta": {
+    "applianceConnectionState": "1",
+    "applianceSerial": "001535600010",
+    "applianceType": "WPM",
+    "applianceTypeCode": "13040",
+    "applianceVersion": "M3.13",
+    "cloudCommDisabled": "0",
+    "cloudConnectionState": "1",
+    "firmwareVersion": "A2.1.7-B2.1.7",
+    "gatewayBoardModel": "Carel i.MX6 ULL pCOWeb Board",
+    "gatewayMac": "00:0A:5C:12:34:56",
+    "gatewayProductCode": "PCO1GD3WD0",
+    "gatewaySerial": "A02216104",
+    "gatewayType": "nwpm2_plugin",
+    "internetConnectionState": "0",
+    "localIpAddressV4": "127.0.0.127",
+    "localIpAddressV6": "fe80::1",
+    "pluginVersion": "10.0.1",
+    "publicIpAddressV4": "203.0.113.5",
+    "publicIpAddressV6": "-",
+    "wpmBios": "6.66",
+    "wpmType": "pCOoem M Core2"
+  },
+  "telemetry": {
+    "1301a": "13.6",
+    "714i": "1",
+    "1074i": "60",
+    "1500d": "1",
+    "530i": "2"
+  }
+}

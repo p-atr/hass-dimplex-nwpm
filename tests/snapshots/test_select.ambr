@@ -1,0 +1,194 @@
+# serializer version: 1
+# name: test_entities[select][select.dimplex_heat_pump_external_lock-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': dict({
+      <SelectEntityCapabilityAttribute.OPTIONS: 'options'>: list([
+        'hardware_input',
+        'inactive',
+        'active',
+      ]),
+    }),
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'select',
+    'entity_category': <EntityCategory.CONFIG: 'config'>,
+    'entity_id': 'select.dimplex_heat_pump_external_lock',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': 'External lock',
+    'options': dict({
+    }),
+    'original_device_class': None,
+    'original_icon': None,
+    'original_name': 'External lock',
+    'platform': 'dimplex_nwpm',
+    'previous_unique_id': None,
+    'suggested_object_id': None,
+    'supported_features': 0,
+    'translation_key': 'external_lock',
+    'unique_id': '001535600010_external_lock',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_entities[select][select.dimplex_heat_pump_external_lock-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Dimplex heat pump External lock',
+      <SelectEntityCapabilityAttribute.OPTIONS: 'options'>: list([
+        'hardware_input',
+        'inactive',
+        'active',
+      ]),
+    }),
+    'context': <ANY>,
+    'entity_id': 'select.dimplex_heat_pump_external_lock',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': 'hardware_input',
+  })
+# ---
+# name: test_entities[select][select.dimplex_heat_pump_operating_mode-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': dict({
+      <SelectEntityCapabilityAttribute.OPTIONS: 'options'>: list([
+        'summer',
+        'auto',
+        'holiday',
+        'party',
+        'second_heat_generator',
+        'cooling',
+      ]),
+    }),
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'select',
+    'entity_category': None,
+    'entity_id': 'select.dimplex_heat_pump_operating_mode',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': 'Operating mode',
+    'options': dict({
+    }),
+    'original_device_class': None,
+    'original_icon': None,
+    'original_name': 'Operating mode',
+    'platform': 'dimplex_nwpm',
+    'previous_unique_id': None,
+    'suggested_object_id': None,
+    'supported_features': 0,
+    'translation_key': 'operating_mode',
+    'unique_id': '001535600010_operating_mode',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_entities[select][select.dimplex_heat_pump_operating_mode-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Dimplex heat pump Operating mode',
+      <SelectEntityCapabilityAttribute.OPTIONS: 'options'>: list([
+        'summer',
+        'auto',
+        'holiday',
+        'party',
+        'second_heat_generator',
+        'cooling',
+      ]),
+    }),
+    'context': <ANY>,
+    'entity_id': 'select.dimplex_heat_pump_operating_mode',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': 'auto',
+  })
+# ---
+# name: test_entities[select][select.dimplex_heat_pump_smart_grid-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': dict({
+      <SelectEntityCapabilityAttribute.OPTIONS: 'options'>: list([
+        'hardware_input',
+        'yellow',
+        'green',
+        'red',
+        'dark_green',
+      ]),
+    }),
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'select',
+    'entity_category': <EntityCategory.CONFIG: 'config'>,
+    'entity_id': 'select.dimplex_heat_pump_smart_grid',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': 'Smart grid',
+    'options': dict({
+    }),
+    'original_device_class': None,
+    'original_icon': None,
+    'original_name': 'Smart grid',
+    'platform': 'dimplex_nwpm',
+    'previous_unique_id': None,
+    'suggested_object_id': None,
+    'supported_features': 0,
+    'translation_key': 'smart_grid',
+    'unique_id': '001535600010_smart_grid',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_entities[select][select.dimplex_heat_pump_smart_grid-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Dimplex heat pump Smart grid',
+      <SelectEntityCapabilityAttribute.OPTIONS: 'options'>: list([
+        'hardware_input',
+        'yellow',
+        'green',
+        'red',
+        'dark_green',
+      ]),
+    }),
+    'context': <ANY>,
+    'entity_id': 'select.dimplex_heat_pump_smart_grid',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': 'hardware_input',
+  })
+# ---
