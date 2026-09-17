@@ -36,19 +36,40 @@
           "password": "Local gateway password used for MQTT (user `mqtt`).",
           "use_modbus": "Also read the Smart-RTC valve state over Modbus TCP."
         }
+      },
+      "dhcp_confirm": {
+        "description": "An NWPM Touch gateway was found at {host}. Enter its local gateway password.",
+        "data": {
+          "password": "Password",
+          "use_modbus": "Use Modbus TCP for additional datapoints"
+        },
+        "data_description": {
+          "password": "Local gateway password used for MQTT (user `mqtt`).",
+          "use_modbus": "Also read the Smart-RTC valve state over Modbus TCP. Modbus TCP must be enabled in the gateway web interface under Settings > Gateway access > Network services."
+        }
       }
     },
     "error": {
       "cannot_connect": "Failed to connect to the gateway MQTT broker",
       "cannot_connect_modbus": "Connected over MQTT, but Modbus TCP is not reachable. Enable network services in the gateway web interface or disable the Modbus TCP option.",
       "invalid_auth": "Invalid authentication",
-      "no_serial": "The gateway did not report a serial number"
+      "no_serial": "The gateway did not report a serial number",
+      "unknown": "Unexpected error"
     },
     "abort": {
       "already_configured": "Device is already configured",
       "reauth_successful": "Re-authentication was successful",
       "reconfigure_successful": "Re-configuration was successful",
-      "unique_id_mismatch": "The gateway at this address belongs to a different heat pump"
+      "unique_id_mismatch": "The gateway at this address belongs to a different heat pump",
+      "already_in_progress": "Configuration flow is already in progress"
+    }
+  },
+  "device": {
+    "gateway": {
+      "name": "Dimplex NWPM Touch"
+    },
+    "heat_pump": {
+      "name": "Dimplex heat pump"
     }
   },
   "entity": {
@@ -264,9 +285,6 @@
       "heating_circuit_3_parallel_shift": {
         "name": "Heating circuit 3 parallel shift"
       },
-      "hot_water_setpoint": {
-        "name": "Hot water setpoint"
-      },
       "hot_water_hysteresis": {
         "name": "Hot water hysteresis"
       },
@@ -347,9 +365,6 @@
       },
       "return_temperature_setpoint": {
         "name": "Return temperature setpoint"
-      },
-      "hot_water_temperature": {
-        "name": "Hot water temperature"
       },
       "hot_water_temperature_setpoint": {
         "name": "Hot water temperature setpoint"
@@ -585,9 +600,6 @@
       "environmental_energy": {
         "name": "Environmental energy"
       },
-      "coefficient_of_performance": {
-        "name": "Coefficient of performance"
-      },
       "last_fault_time": {
         "name": "Last fault"
       },
@@ -809,11 +821,8 @@
     "invalid_auth": {
       "message": "The NWPM Touch gateway rejected the password"
     },
-    "not_connected": {
-      "message": "Not connected to the NWPM Touch gateway"
-    },
     "write_failed": {
-      "message": "Writing {datapoint} to the heat pump manager failed: {error}"
+      "message": "Writing to the heat pump manager failed: {error}"
     }
   }
 }

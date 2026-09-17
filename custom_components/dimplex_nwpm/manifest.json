@@ -23,7 +23,7 @@
   ],
   "quality_scale": "platinum",
   "requirements": [
-    "pydimplex-nwpm==0.1.0"
+    "pydimplex-nwpm==0.2.0"
   ],
-  "version": "0.1.0"
+  "version": "0.2.0"
 }

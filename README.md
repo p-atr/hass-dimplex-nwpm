@@ -44,12 +44,14 @@ Everything else uses MQTT.
 
 ### HACS (recommended)
 
-[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=p-atr&repository=hass-dimplex-nwpm&category=integration)
+1. In HACS open *Integrations → ⋮ (top right) → Custom repositories*, add
+   `https://github.com/p-atr/hass-dimplex-nwpm` with type *Integration* and
+   click *Add*. This step is only needed until the repository is part of the
+   HACS default store; without it HACS reports the repository as not found.
+2. Open the repository in HACS (search for **Dimplex NWPM Touch** or use the
+   button below), download it and restart Home Assistant.
 
-1. In HACS open *Integrations → ⋮ → Custom repositories*, add
-   `https://github.com/p-atr/hass-dimplex-nwpm` with category *Integration*
-   (not needed once the repository is in the HACS default store).
-2. Install **Dimplex NWPM Touch** and restart Home Assistant.
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=p-atr&repository=hass-dimplex-nwpm&category=integration)
 
 ### Manual
 
@@ -91,20 +93,16 @@ entities and the **NWPM Touch gateway** with its connection diagnostics.
 - Key operating data: outdoor, flow and return temperature, flow rate (L/h),
   heating system pressure, high and low refrigerant pressure, inverter
   frequency and power, current power stage (heating/cooling), status.
-- Further temperatures: hot water, heat source inlet/outlet, heating circuits
-  2 and 3, room temperature and humidity 1/2, passive cooling, solar and
+- Further temperatures: heat source inlet/outlet, heating circuits 1 to 3, room temperature and humidity 1/2, passive cooling, solar and
   ventilation temperatures, ventilation fan speeds, hot gas temperature.
 - Refrigerant circuit diagnostics: evaporation temperature, suction gas
   temperature, superheat, expansion valve position, inverter voltage.
-- Status, lock reason, fault and sensor fault as translated enum sensors; the
-  raw code is available as the `code` attribute.
+- Status, lock reason, fault and sensor fault as translated enum sensors.
 - Runtimes of the compressors, pumps, second heat generator, flange heater
-  and cooling, plus compressor cycle counters.
-- Heat meter values: thermal, cooling and electrical power, coefficient of
-  performance, energy counters for heating, hot water, pool and environmental
+  and cooling, plus compressor cycle counters (disabled by default).
+- Heat meter values: thermal, cooling and electrical power, energy counters for heating, hot water, pool and environmental
   energy (heat pumps with an integrated or external heat meter only).
-- Last fault and last lock timestamps from the appliance history, with the
-  message code and details as attributes.
+- Last fault and last lock timestamps from the appliance history.
 
 Setpoints, runtimes and refrigerant diagnostics are in the *Diagnostic*
 section of the device page so the key operating data stays on top. Entities of
@@ -113,11 +111,12 @@ equipment as installed.
 
 ### Binary sensors
 
-- Digital inputs: smart grid 1/2, utility (EVU) lock, external lock.
-- Outputs: compressors, fan, nozzle ring heater, 4-way valves, pumps, boiler,
-  pipe/immersion/flange heater, circulation pump, mixers, collective fault.
-- Input switches: pressure switches, hot gas and frost protection thermostat,
-  flow switch, motor protection.
+- Outputs: compressors, fan, nozzle ring heater, pumps, boiler,
+  pipe/immersion/flange heater, circulation pump, collective fault.
+- Diagnostic signals, disabled by default: digital inputs (smart grid 1/2,
+  utility (EVU) lock, external lock), pressure switches, hot gas and frost
+  protection thermostat, flow switch, motor protection, 4-way and switch
+  valves, mixers.
 - Modbus TCP only: Smart-RTC valve state.
 - Gateway: heat pump connection, cloud connection, internet connection.
 
@@ -130,14 +129,15 @@ equipment as installed.
   *hardware input* after a power cycle.
 - **External lock** select: hardware input, inactive, active (WPM software
   M3.8 or newer).
-- **Hot water** water heater entity with the current temperature and the
-  setpoint (limited by the configured minimum and maximum hot water
+- **Hot water** water heater entity with the current hot water temperature
+  and the setpoint (limited by the configured minimum and maximum hot water
   temperature).
 - Number entities for all documented settings: party hours, holiday days,
   ventilation level, heating curve parameters and hysteresis for all heating
   circuits, hot water and pool temperatures, second heat generator limits,
   external outdoor temperature (for feeding a weather station value to the
-  heat pump) and the PV surplus register (Modbus TCP only).
+  heat pump) and the PV surplus register (for feeding the current PV surplus
+  from an automation).
 - **Synchronize time** button writing the current time to the heat pump
   manager.
 
@@ -161,7 +161,6 @@ entities:
   - sensor.dimplex_heat_pump_power_stage_heating
   - sensor.dimplex_heat_pump_thermal_power
   - sensor.dimplex_heat_pump_electrical_power
-  - sensor.dimplex_heat_pump_coefficient_of_performance
 ```
 
 Raise the hot water setpoint while the photovoltaic system exports energy:

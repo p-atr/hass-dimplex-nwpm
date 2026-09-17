@@ -20,5 +20,7 @@ jobs:
         run: |
           ruff check .
           ruff format --check .
+      - name: Type check
+        run: mypy
       - name: Test
         run: pytest

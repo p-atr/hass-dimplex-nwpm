@@ -1,11 +1,10 @@
 """Water heater platform for the Dimplex NWPM Touch integration."""
 
 from dataclasses import dataclass
-from typing import Any, override
+from typing import Any, overload, override
 
 from homeassistant.components.water_heater import (
     STATE_HEAT_PUMP,
-    STATE_OFF,
     WaterHeaterEntity,
     WaterHeaterEntityDescription,
     WaterHeaterEntityFeature,
@@ -13,29 +12,16 @@ from homeassistant.components.water_heater import (
 from homeassistant.const import ATTR_TEMPERATURE, PRECISION_WHOLE, UnitOfTemperature
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
-from pydimplex_nwpm import canonical_name
+from pydimplex_nwpm import DATAPOINTS
 
-from .const import (
-    COND_HOT_WATER,
-    DATAPOINT_HOT_WATER_MAX,
-    DATAPOINT_HOT_WATER_MIN,
-    DATAPOINT_HOT_WATER_SETPOINT,
-    DATAPOINT_HOT_WATER_TEMPERATURE,
-    DATAPOINT_STATUS,
-    STATUS_HOT_WATER,
-)
 from .coordinator import DimplexConfigEntry
 from .entity import DimplexEntity, DimplexEntityDescription
 
 PARALLEL_UPDATES = 1
 
-KEY_TEMPERATURE = canonical_name(DATAPOINT_HOT_WATER_TEMPERATURE)
-KEY_MIN = canonical_name(DATAPOINT_HOT_WATER_MIN)
-KEY_MAX = canonical_name(DATAPOINT_HOT_WATER_MAX)
-KEY_STATUS = canonical_name(DATAPOINT_STATUS)
-
-DEFAULT_MIN_TEMP = 10
-DEFAULT_MAX_TEMP = 85
+SETPOINT = "hot_water_setpoint"
+MIN_TEMP = DATAPOINTS[SETPOINT].minimum or 0
+MAX_TEMP = DATAPOINTS[SETPOINT].maximum or 0
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -48,8 +34,7 @@ class DimplexWaterHeaterEntityDescription(
 HOT_WATER = DimplexWaterHeaterEntityDescription(
     key="hot_water",
     translation_key="hot_water",
-    datapoint=DATAPOINT_HOT_WATER_SETPOINT,
-    condition=COND_HOT_WATER,
+    value_fn=lambda heat_pump: heat_pump.value(SETPOINT),
 )
 
 
@@ -60,14 +45,16 @@ async def async_setup_entry(
 ) -> None:
     """Set up the Dimplex hot water entity based on a config entry."""
     coordinator = entry.runtime_data
-    if HOT_WATER.supported(coordinator):
+    if coordinator.heat_pump.supports(SETPOINT):
         async_add_entities([DimplexWaterHeater(coordinator, HOT_WATER)])
 
 
 class DimplexWaterHeater(DimplexEntity, WaterHeaterEntity):
-    """Domestic hot water preparation of the heat pump."""
+    """Domestic hot water prepared by the heat pump."""
 
     entity_description: DimplexWaterHeaterEntityDescription
+
+    _attr_current_operation = STATE_HEAT_PUMP
     _attr_supported_features = WaterHeaterEntityFeature.TARGET_TEMPERATURE
     _attr_temperature_unit = UnitOfTemperature.CELSIUS
     _attr_precision = PRECISION_WHOLE
@@ -75,42 +62,37 @@ class DimplexWaterHeater(DimplexEntity, WaterHeaterEntity):
 
     @property
     @override
-    def current_operation(self) -> str:
-        """Return whether the heat pump is currently heating water."""
-        status = self.coordinator.data.values.get(KEY_STATUS)
-        return STATE_HEAT_PUMP if status == STATUS_HOT_WATER else STATE_OFF
-
-    @property
-    @override
     def current_temperature(self) -> float | None:
         """Return the hot water temperature."""
-        if (value := self.coordinator.data.values.get(KEY_TEMPERATURE)) is None:
-            return None
-        return float(value)
+        return self._float("hot_water_temperature")
 
     @property
     @override
     def target_temperature(self) -> float | None:
         """Return the hot water setpoint."""
-        if (value := self.raw_value) is None:
-            return None
-        return float(value)
+        return self._float(SETPOINT)
 
     @property
     @override
     def min_temp(self) -> float:
         """Return the configured minimum hot water temperature."""
-        return float(self.coordinator.data.values.get(KEY_MIN, DEFAULT_MIN_TEMP))
+        return self._float("hot_water_minimum_temperature", MIN_TEMP)
 
     @property
     @override
     def max_temp(self) -> float:
         """Return the configured maximum hot water temperature."""
-        return float(self.coordinator.data.values.get(KEY_MAX, DEFAULT_MAX_TEMP))
+        return self._float("hot_water_maximum_temperature", MAX_TEMP)
 
     @override
     async def async_set_temperature(self, **kwargs: Any) -> None:
         """Set the hot water setpoint."""
-        await self.coordinator.async_set_datapoint(
-            DATAPOINT_HOT_WATER_SETPOINT, round(kwargs[ATTR_TEMPERATURE])
-        )
+        await self.async_call(self.heat_pump.set(SETPOINT, kwargs[ATTR_TEMPERATURE]))
+
+    @overload
+    def _float(self, key: str) -> float | None: ...
+    @overload
+    def _float(self, key: str, default: float) -> float: ...
+    def _float(self, key: str, default: float | None = None) -> float | None:
+        value = self.heat_pump.value(key)
+        return default if value is None else float(value)

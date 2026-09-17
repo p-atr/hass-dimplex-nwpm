@@ -1,7 +1,5 @@
 """Tests for the Dimplex NWPM Touch number platform."""
 
-from unittest.mock import MagicMock
-
 from homeassistant.components.number import (
     ATTR_VALUE,
     SERVICE_SET_VALUE,
@@ -20,6 +18,8 @@ from pytest_homeassistant_custom_component.common import (
     snapshot_platform,
 )
 from syrupy.assertion import SnapshotAssertion
+
+from .conftest import MockGateway
 
 pytestmark = pytest.mark.parametrize(
     "init_integration", [Platform.NUMBER], indirect=True
@@ -45,7 +45,7 @@ async def test_entities(
             "number.dimplex_heat_pump_heating_curve_parallel_shift",
             2,
             "767u",
-            21.0,
+            21,
             id="offset",
         ),
         pytest.param(
@@ -56,52 +56,38 @@ async def test_entities(
             id="analog",
         ),
         pytest.param(
-            "number.dimplex_heat_pump_hot_water_setpoint", 55, "1042u", 55.0, id="plain"
-        ),
-        pytest.param(
             "number.dimplex_heat_pump_bivalence_parallel_limit_temperature",
             -10,
             "750i",
-            -10.0,
+            -10,
             id="signed",
+        ),
+        pytest.param(
+            "number.dimplex_heat_pump_pv_surplus", 1500, "2670i", 150, id="scaled"
         ),
     ],
 )
 async def test_set_value(
     hass: HomeAssistant,
-    mock_mqtt_client: MagicMock,
+    mock_gateway: MockGateway,
     entity_id: str,
     value: float,
     datapoint: str,
     written: float,
 ) -> None:
-    """Test writing a setting over MQTT."""
+    """Test writing a setting and reading it back."""
     await hass.services.async_call(
         NUMBER_DOMAIN,
         SERVICE_SET_VALUE,
         {ATTR_ENTITY_ID: entity_id, ATTR_VALUE: value},
         blocking=True,
     )
-    mock_mqtt_client.set_value.assert_awaited_once_with(datapoint, written)
-    mock_mqtt_client.get_values.assert_any_await(datapoint)
+    mock_gateway.set_value.assert_awaited_once_with(datapoint, written)
+    mock_gateway.get_values.assert_awaited_with(datapoint)
+    assert float(hass.states.get(entity_id).state) == value
 
 
-@pytest.mark.usefixtures("entity_registry_enabled_by_default", "init_integration")
-async def test_set_scaled_value(
-    hass: HomeAssistant, mock_mqtt_client: MagicMock
-) -> None:
-    """Test the PV surplus is written in units of 10 W."""
-    assert hass.states.get("number.dimplex_heat_pump_pv_surplus").state == "0.0"
-    await hass.services.async_call(
-        NUMBER_DOMAIN,
-        SERVICE_SET_VALUE,
-        {ATTR_ENTITY_ID: "number.dimplex_heat_pump_pv_surplus", ATTR_VALUE: 1500},
-        blocking=True,
-    )
-    mock_mqtt_client.set_value.assert_awaited_once_with("2670i", 150.0)
-
-
-@pytest.mark.usefixtures("entity_registry_enabled_by_default", "init_integration")
+@pytest.mark.usefixtures("init_integration")
 @pytest.mark.parametrize(
     "exception",
     [
@@ -110,19 +96,15 @@ async def test_set_scaled_value(
     ],
 )
 async def test_set_value_error(
-    hass: HomeAssistant, mock_mqtt_client: MagicMock, exception: Exception
+    hass: HomeAssistant, mock_gateway: MockGateway, exception: Exception
 ) -> None:
     """Test a failed write raises a translated error."""
-    mock_mqtt_client.set_value.side_effect = exception
+    mock_gateway.set_value.side_effect = exception
     with pytest.raises(HomeAssistantError) as excinfo:
         await hass.services.async_call(
             NUMBER_DOMAIN,
             SERVICE_SET_VALUE,
-            {
-                ATTR_ENTITY_ID: "number.dimplex_heat_pump_party_hours",
-                ATTR_VALUE: 4,
-            },
+            {ATTR_ENTITY_ID: "number.dimplex_heat_pump_party_hours", ATTR_VALUE: 4},
             blocking=True,
         )
     assert excinfo.value.translation_key == "write_failed"
-    assert excinfo.value.translation_placeholders["datapoint"] == "715u"

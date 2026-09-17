@@ -36,19 +36,40 @@
           "password": "Lokales Gateway-Passwort für MQTT (Benutzer `mqtt`).",
           "use_modbus": "Zusätzlich den Zustand des Smart-RTC-Stellventils über Modbus TCP lesen."
         }
+      },
+      "dhcp_confirm": {
+        "description": "Das NWPM Touch Gateway unter {host} wurde gefunden. Gib das lokale Gateway-Passwort ein.",
+        "data": {
+          "password": "Passwort",
+          "use_modbus": "Modbus TCP für zusätzliche Datenpunkte verwenden"
+        },
+        "data_description": {
+          "password": "Lokales Gateway-Passwort für MQTT (Benutzer `mqtt`).",
+          "use_modbus": "Zusätzlich den Zustand des Smart-RTC-Stellventils über Modbus TCP lesen. Modbus TCP muss in der Weboberfläche des Gateways unter Einstellungen > Gateway Zugang > Netzwerkdienste freigegeben sein."
+        }
       }
     },
     "error": {
       "cannot_connect": "Verbindung zum MQTT-Broker des Gateways fehlgeschlagen",
       "cannot_connect_modbus": "MQTT-Verbindung erfolgreich, aber Modbus TCP ist nicht erreichbar. Netzwerkdienste in der Weboberfläche des Gateways freigeben oder die Modbus TCP-Option deaktivieren.",
       "invalid_auth": "Ungültige Authentifizierung",
-      "no_serial": "Das Gateway hat keine Seriennummer gemeldet"
+      "no_serial": "Das Gateway hat keine Seriennummer gemeldet",
+      "unknown": "Unerwarteter Fehler"
     },
     "abort": {
       "already_configured": "Gerät ist bereits konfiguriert",
       "reauth_successful": "Die erneute Authentifizierung war erfolgreich",
       "reconfigure_successful": "Die Neukonfiguration war erfolgreich",
-      "unique_id_mismatch": "Das Gateway unter dieser Adresse gehört zu einer anderen Wärmepumpe"
+      "unique_id_mismatch": "Das Gateway unter dieser Adresse gehört zu einer anderen Wärmepumpe",
+      "already_in_progress": "Die Konfiguration wird bereits durchgeführt"
+    }
+  },
+  "device": {
+    "gateway": {
+      "name": "Dimplex NWPM Touch"
+    },
+    "heat_pump": {
+      "name": "Dimplex Wärmepumpe"
     }
   },
   "entity": {
@@ -264,9 +285,6 @@
       "heating_circuit_3_parallel_shift": {
         "name": "Parallelverschiebung 3. Kreis"
       },
-      "hot_water_setpoint": {
-        "name": "Warmwassersolltemperatur"
-      },
       "hot_water_hysteresis": {
         "name": "Hysterese Warmwasser"
       },
@@ -347,9 +365,6 @@
       },
       "return_temperature_setpoint": {
         "name": "Rücklaufsolltemperatur"
-      },
-      "hot_water_temperature": {
-        "name": "Warmwassertemperatur"
       },
       "hot_water_temperature_setpoint": {
         "name": "Warmwassersolltemperatur"
@@ -585,9 +600,6 @@
       "environmental_energy": {
         "name": "Umweltenergie"
       },
-      "coefficient_of_performance": {
-        "name": "Leistungszahl"
-      },
       "last_fault_time": {
         "name": "Letzte Störung"
       },
@@ -809,11 +821,8 @@
     "invalid_auth": {
       "message": "Die NWPM Touch-Erweiterung hat das Passwort abgelehnt"
     },
-    "not_connected": {
-      "message": "Keine Verbindung zur NWPM Touch-Erweiterung"
-    },
     "write_failed": {
-      "message": "Schreiben von {datapoint} auf den Wärmepumpenmanager fehlgeschlagen: {error}"
+      "message": "Schreiben an den Wärmepumpenmanager fehlgeschlagen: {error}"
     }
   }
 }

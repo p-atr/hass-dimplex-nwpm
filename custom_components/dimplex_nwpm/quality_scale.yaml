@@ -9,7 +9,10 @@ rules:
     comment: |
       Push updates over MQTT; settings that the gateway does not push are
       polled once a minute.
-  brands: todo
+  brands:
+    status: done
+    comment: |
+      Brand images are shipped in the brand folder of the integration.
   common-modules: done
   config-flow-test-coverage: done
   config-flow: done
@@ -45,7 +48,7 @@ rules:
   docs-configuration-parameters: done
   docs-installation-parameters: done
   entity-unavailable: done
-  integration-owner: todo
+  integration-owner: done
   log-when-unavailable: done
   parallel-updates: done
   reauthentication-flow: done
@@ -91,8 +94,8 @@ rules:
   async-dependency:
     status: done
     comment: |
-      The pydimplex-nwpm library drives paho-mqtt from the event loop without
-      a network thread and uses the asynchronous pymodbus client.
+      The pydimplex-nwpm library uses aiomqtt and the asynchronous pymodbus
+      client.
   inject-websession:
     status: exempt
     comment: |

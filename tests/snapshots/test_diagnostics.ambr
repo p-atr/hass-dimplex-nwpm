@@ -1,6 +1,7 @@
 # serializer version: 1
 # name: test_diagnostics
   dict({
+    'connected': True,
     'entry': dict({
       'host': '127.0.0.127',
       'mac': '**REDACTED**',
@@ -11,7 +12,6 @@
       dict({
         'details': dict({
           'err_rl': '24',
-          'err_vl': '21',
         }),
         'index': 0,
         'time': '2025-12-19T08:15:00+01:00',
@@ -21,19 +21,16 @@
     'lock_history': list([
       dict({
         'details': dict({
-          'lock_rl': '22',
         }),
         'index': 0,
         'time': '2025-11-03T15:28:00+01:00',
         'value': 15,
       }),
     ]),
-    'modbus_available': True,
     'modbus_enabled': True,
-    'mqtt_connected': True,
     'twin_meta': dict({
       'applianceConnectionState': '1',
-      'applianceSerial': '001535600010',
+      'applianceSerial': '**REDACTED**',
       'applianceType': 'WPM',
       'applianceTypeCode': '13040',
       'applianceVersion': 'M3.13',
@@ -43,10 +40,10 @@
       'gatewayBoardModel': 'Carel i.MX6 ULL pCOWeb Board',
       'gatewayMac': '**REDACTED**',
       'gatewayProductCode': 'PCO1GD3WD0',
-      'gatewaySerial': 'A02216104',
+      'gatewaySerial': '**REDACTED**',
       'gatewayType': 'nwpm2_plugin',
       'internetConnectionState': '0',
-      'localIpAddressV4': '127.0.0.127',
+      'localIpAddressV4': '**REDACTED**',
       'localIpAddressV6': '**REDACTED**',
       'pluginVersion': '10.0.1',
       'publicIpAddressV4': '**REDACTED**',
@@ -231,7 +228,6 @@
       '1414d': False,
       '1415d': False,
       '1416d': False,
-      '1454d': False,
       '1472i': 576,
       '1473i': 2,
       '1474i': 0,
@@ -309,6 +305,11 @@
       '1596i': 0,
       '1597i': 250,
       '1604i': 2,
+      '1620i': 191,
+      '1621i': 240,
+      '1622i': 207,
+      '1623i': 0,
+      '1624i': 207,
       '1627i': 0,
       '1628i': 0,
       '1629i': 200,
@@ -378,7 +379,7 @@
       '932d': True,
       '932i': 19,
       '933i': 38,
-      'co177': True,
+      'coil177': True,
     }),
   })
 # ---

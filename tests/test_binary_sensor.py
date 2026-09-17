@@ -27,14 +27,14 @@ async def test_entities(
     await snapshot_platform(hass, entity_registry, snapshot, init_integration.entry_id)
 
     gateway = device_registry.async_get_device_by_identifier(
-        (DOMAIN, "A02216104"), init_integration.entry_id
+        (DOMAIN, "A02216104"),
+        init_integration.entry_id,
     )
     assert gateway is not None
-    gateway_entities = {
+    assert {
         entity_entry.entity_id
         for entity_entry in er.async_entries_for_device(entity_registry, gateway.id)
-    }
-    assert gateway_entities == {
+    } == {
         "binary_sensor.dimplex_nwpm_touch_heat_pump_connection",
         "binary_sensor.dimplex_nwpm_touch_cloud_connection",
         "binary_sensor.dimplex_nwpm_touch_internet_connection",

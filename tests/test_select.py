@@ -1,7 +1,5 @@
 """Tests for the Dimplex NWPM Touch select platform."""
 
-from unittest.mock import MagicMock
-
 from homeassistant.components.select import (
     ATTR_OPTION,
     SERVICE_SELECT_OPTION,
@@ -18,6 +16,8 @@ from pytest_homeassistant_custom_component.common import (
     snapshot_platform,
 )
 from syrupy.assertion import SnapshotAssertion
+
+from .conftest import MockGateway
 
 pytestmark = pytest.mark.parametrize(
     "init_integration", [Platform.SELECT], indirect=True
@@ -55,7 +55,7 @@ async def test_entities(
 )
 async def test_select_option(
     hass: HomeAssistant,
-    mock_mqtt_client: MagicMock,
+    mock_gateway: MockGateway,
     entity_id: str,
     option: str,
     datapoint: str,
@@ -68,13 +68,13 @@ async def test_select_option(
         {ATTR_ENTITY_ID: entity_id, ATTR_OPTION: option},
         blocking=True,
     )
-    mock_mqtt_client.set_value.assert_awaited_once_with(datapoint, code)
+    mock_gateway.set_value.assert_awaited_once_with(datapoint, code)
+    assert hass.states.get(entity_id).state == option
 
 
 @pytest.mark.usefixtures("init_integration")
-async def test_unknown_code(hass: HomeAssistant, mock_mqtt_client: MagicMock) -> None:
+async def test_unknown_code(hass: HomeAssistant, mock_gateway: MockGateway) -> None:
     """Test an undocumented mode code results in an unknown option."""
-    for listener in mock_mqtt_client.listeners.values:
-        listener({"714i": 42})
+    mock_gateway.push_values({"714i": "42"})
     await hass.async_block_till_done()
     assert hass.states.get("select.dimplex_heat_pump_operating_mode").state == "unknown"

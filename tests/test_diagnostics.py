@@ -22,3 +22,4 @@ async def test_diagnostics(
     assert diagnostics == snapshot
     assert diagnostics["entry"]["password"] == "**REDACTED**"
     assert diagnostics["twin_meta"]["gatewayMac"] == "**REDACTED**"
+    assert diagnostics["twin_meta"]["applianceSerial"] == "**REDACTED**"

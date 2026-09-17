@@ -1,3 +1,4 @@
 pytest-homeassistant-custom-component==0.13.365
-pydimplex-nwpm==0.1.0
+pydimplex-nwpm==0.2.0
 ruff>=0.9
+mypy>=1.14

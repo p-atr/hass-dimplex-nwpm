@@ -1,25 +1,21 @@
 """Fixtures for the Dimplex NWPM Touch integration tests."""
 
 from collections.abc import Callable, Generator
-from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
-from unittest.mock import MagicMock, PropertyMock, patch
+from typing import Any, Self
+from unittest.mock import AsyncMock, MagicMock, PropertyMock, patch
 
 from homeassistant.const import CONF_HOST, CONF_MAC, CONF_PASSWORD, Platform
 from homeassistant.core import HomeAssistant
-from pydimplex_nwpm import (
-    ApplianceTimeState,
-    DatapointValue,
-    DimplexRequestError,
-    HistoryEntry,
-    TwinState,
+from pydimplex_nwpm import DatapointValue, DimplexRequestError
+from pydimplex_nwpm.models import (
     canonical_name,
     expand_range,
+    format_value,
+    parse_value,
 )
 import pytest
 from pytest_homeassistant_custom_component.common import (
     MockConfigEntry,
-    async_load_json_object_fixture,
     load_json_object_fixture,
 )
 from pytest_homeassistant_custom_component.syrupy import (
@@ -35,24 +31,94 @@ HOST = "127.0.0.127"
 PASSWORD = "80B56598"
 MAC = "00:0a:5c:12:34:56"
 
-MODBUS_COILS: dict[int, list[bool]] = {177: [True]}
+TOPIC_TWIN = "extern/broadcast/twin_reported_state"
 
 
-@dataclass
-class MqttListeners:
-    """Callbacks the coordinator registered on the mocked MQTT client."""
+class MockGateway:
+    """Fake MQTT transport of the gateway answering from the fixtures."""
 
-    values: list[Callable[[dict[str, DatapointValue]], None]] = field(
-        default_factory=list
-    )
-    twin: list[Callable[[TwinState], None]] = field(default_factory=list)
-    error_history: list[Callable[[list[HistoryEntry]], None]] = field(
-        default_factory=list
-    )
-    lock_history: list[Callable[[list[HistoryEntry]], None]] = field(
-        default_factory=list
-    )
-    connection: list[Callable[[bool], None]] = field(default_factory=list)
+    def __init__(self, twin: dict[str, Any], values: dict[str, DatapointValue]) -> None:
+        """Initialize the gateway."""
+        self.twin = twin
+        self.values = values
+        self.connected = False
+        self.authentication_failed = False
+        self._on_message: Callable[[str, Any], None] | None = None
+        self._on_connection: Callable[[], None] | None = None
+        self.connect = AsyncMock(side_effect=self._connect)
+        self.disconnect = AsyncMock()
+        self.get_values = AsyncMock(side_effect=self._get_values)
+        self.set_value = AsyncMock(side_effect=self._set_value)
+        self.set_appliance_time = AsyncMock()
+
+    def __call__(
+        self,
+        host: str,
+        password: str,
+        *,
+        port: int,
+        on_message: Callable[[str, Any], None],
+        on_connection: Callable[[], None],
+    ) -> Self:
+        """Act as the transport class of the library."""
+        self._on_message = on_message
+        self._on_connection = on_connection
+        return self
+
+    def push(self, topic: str, payload: Any) -> None:
+        """Deliver a broadcast from the gateway."""
+        assert self._on_message is not None
+        self._on_message(topic, payload)
+
+    def push_values(self, values: dict[str, str]) -> None:
+        """Deliver a changed_on broadcast."""
+        self.push(
+            "gateway/broadcast/changed_on/modbus/test",
+            {
+                "test": {
+                    "value_batch": {
+                        name: {"value": value} for name, value in values.items()
+                    }
+                }
+            },
+        )
+
+    def set_connected(self, connected: bool) -> None:
+        """Simulate a lost or restored connection."""
+        assert self._on_connection is not None
+        self.connected = connected
+        self._on_connection()
+
+    async def _connect(self) -> None:
+        self.set_connected(True)
+        self.push(TOPIC_TWIN, self.twin)
+        self.push(
+            "extern/broadcast/error_history_state",
+            [
+                {
+                    "idx": 0,
+                    "err_value": 25,
+                    "time": "2025-12-19T08:15:00+01:00",
+                    "err_rl": "24",
+                }
+            ],
+        )
+        self.push(
+            "extern/broadcast/lock_history_state",
+            [{"idx": 0, "lock_value": 15, "time": "2025-11-03T15:28:00+01:00"}],
+        )
+        self.push("extern/broadcast/appliance_time_state", {"utc_offset_minutes": 120})
+
+    async def _get_values(self, name: str) -> dict[str, DatapointValue]:
+        result: dict[str, DatapointValue] = {}
+        for single in expand_range(name):
+            if (key := canonical_name(single)) not in self.values:
+                raise DimplexRequestError(1, f"Requested value not provided ({name})")
+            result[key] = self.values[key]
+        return result
+
+    async def _set_value(self, name: str, value: float) -> None:
+        self.values[canonical_name(name)] = parse_value(name, format_value(name, value))
 
 
 @pytest.fixture(autouse=True)
@@ -101,111 +167,24 @@ def mock_setup_entry() -> Generator[None]:
 
 
 @pytest.fixture
-def twin() -> TwinState:
-    """Return the device twin reported by the gateway."""
-    return TwinState.from_payload(load_json_object_fixture("twin.json", DOMAIN))
+def mock_gateway() -> Generator[MockGateway]:
+    """Replace the MQTT transport of the library with the fixture gateway."""
+    gateway = MockGateway(
+        load_json_object_fixture("twin.json", DOMAIN),
+        dict(load_json_object_fixture("values.json", DOMAIN)),
+    )
+    with patch("pydimplex_nwpm.heat_pump.DimplexMqttClient", gateway):
+        yield gateway
 
 
 @pytest.fixture
-def values() -> dict[str, DatapointValue]:
-    """Return the datapoint values the gateway answers with."""
-    return dict(load_json_object_fixture("values.json", DOMAIN))
-
-
-@pytest.fixture
-def mock_mqtt_client(
-    twin: TwinState, values: dict[str, DatapointValue]
-) -> Generator[MagicMock]:
-    """Return a mocked MQTT client that answers from the fixtures."""
-
-    async def get_values(name: str) -> dict[str, DatapointValue]:
-        result: dict[str, DatapointValue] = {}
-        for single in expand_range(name):
-            key = canonical_name(single)
-            if key not in values:
-                raise DimplexRequestError(1, f"Requested value not provided ({name})")
-            result[key] = values[key]
-        return result
-
-    with (
-        patch(
-            "custom_components.dimplex_nwpm.DimplexMqttClient", autospec=True
-        ) as mock_class,
-        patch(
-            "custom_components.dimplex_nwpm.config_flow.DimplexMqttClient",
-            new=mock_class,
-        ),
-    ):
-        client: MagicMock = mock_class.return_value
-        client.host = HOST
-        client.client_id = "ha_dimplex_test"
-        client.connected = True
-        client.authentication_failed = False
-        client.twin = twin
-        client.error_history = [
-            HistoryEntry(
-                index=0,
-                value=25,
-                time=datetime(2025, 12, 19, 8, 15, tzinfo=timezone(timedelta(hours=1))),
-                details={"err_rl": "24", "err_vl": "21"},
-            )
-        ]
-        client.lock_history = [
-            HistoryEntry(
-                index=0,
-                value=15,
-                time=datetime(2025, 11, 3, 15, 28, tzinfo=timezone(timedelta(hours=1))),
-                details={"lock_rl": "22"},
-            )
-        ]
-        client.appliance_time_state = ApplianceTimeState(
-            timezone_name="Europe/Zurich", utc_offset_minutes=120
-        )
-        client.wait_for_twin.return_value = twin
-        client.get_values.side_effect = get_values
-        client.get_appliance_time.return_value = datetime(2026, 9, 17, 12, 0, 0)
-        listeners = MqttListeners()
-        client.listeners = listeners
-
-        def register(
-            target: list[Callable[..., None]],
-        ) -> Callable[..., Callable[[], None]]:
-            def add(listener: Callable[..., None]) -> Callable[[], None]:
-                target.append(listener)
-                return lambda: target.remove(listener)
-
-            return add
-
-        client.add_values_listener.side_effect = register(listeners.values)
-        client.add_twin_listener.side_effect = register(listeners.twin)
-        client.add_error_history_listener.side_effect = register(
-            listeners.error_history
-        )
-        client.add_lock_history_listener.side_effect = register(listeners.lock_history)
-        client.add_connection_listener.side_effect = register(listeners.connection)
-        yield client
-
-
-@pytest.fixture
-def mock_modbus_client() -> Generator[MagicMock]:
-    """Return a mocked Modbus TCP client that answers from the fixtures."""
-
-    async def read_coils(address: int, count: int = 1) -> list[bool]:
-        return MODBUS_COILS[address][:count]
-
-    with (
-        patch(
-            "custom_components.dimplex_nwpm.DimplexModbusClient", autospec=True
-        ) as mock_class,
-        patch(
-            "custom_components.dimplex_nwpm.config_flow.DimplexModbusClient",
-            new=mock_class,
-        ),
-    ):
-        client: MagicMock = mock_class.return_value
-        client.connected = True
-        client.read_coils.side_effect = read_coils
-        client.read_software_version.return_value = "M3.13"
+def mock_modbus() -> Generator[MagicMock]:
+    """Replace the Modbus TCP client with one reporting an open valve."""
+    client = MagicMock(connected=True)
+    client.read_coils = AsyncMock(
+        return_value=MagicMock(bits=[True], isError=MagicMock(return_value=False))
+    )
+    with patch("pydimplex_nwpm.heat_pump.AsyncModbusTcpClient", return_value=client):
         yield client
 
 
@@ -214,8 +193,8 @@ async def init_integration(
     hass: HomeAssistant,
     request: pytest.FixtureRequest,
     mock_config_entry: MockConfigEntry,
-    mock_mqtt_client: MagicMock,
-    mock_modbus_client: MagicMock,
+    mock_gateway: MockGateway,
+    mock_modbus: MagicMock,
 ) -> MockConfigEntry:
     """Set up the integration, optionally limited to one platform."""
     platform: Platform | None = getattr(request, "param", None)
@@ -227,10 +206,3 @@ async def init_integration(
         await hass.config_entries.async_setup(mock_config_entry.entry_id)
         await hass.async_block_till_done()
     return mock_config_entry
-
-
-async def load_twin(hass: HomeAssistant) -> TwinState:
-    """Load the twin fixture without blocking the event loop."""
-    return TwinState.from_payload(
-        await async_load_json_object_fixture(hass, "twin.json", DOMAIN)
-    )

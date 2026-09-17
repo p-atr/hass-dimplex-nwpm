@@ -235,9 +235,6 @@
       "ventilation_exhaust_fan_speed": {
         "default": "mdi:fan"
       },
-      "coefficient_of_performance": {
-        "default": "mdi:gauge"
-      },
       "flow_rate": {
         "default": "mdi:waves-arrow-right"
       },
